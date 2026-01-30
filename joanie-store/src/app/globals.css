@@ -1,26 +1,38 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@config "../../tailwind.config.ts";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* From Figma tokens.json - EXACT VALUES */
+  --color-promo-banner: #4A4C6C;
+  --color-page-bg: #F4F4F4;
+  --color-footer-bg: #333333;
+  --color-card-bg: #FFFFFF;
+  --color-btn-dark: #333333;
+  --color-btn-accent: #77794E;
+  --color-btn-accent-hover: #9FA16D;
+  --color-btn-border-light: #F4F4F4;
+  --color-sale-red: #DB4444;
+  --color-wishlist-red: #DB4444;
+  --color-price-red: #DB4444;
+  --color-star-yellow: #FFAD33;
+  --color-star-empty: #E0E0E0;
+  --color-text-primary: #333333;
+  --color-text-secondary: #7F7F7F;
+  --color-icon-container-outer: #F3F3F3;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Max widths */
+  --max-width-page: 1440px;
+  --max-width-content: 1370px;
+
+  /* Box shadows */
+  --shadow-header: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  /* Font family */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }

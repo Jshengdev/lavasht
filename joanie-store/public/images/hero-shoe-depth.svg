@@ -1,0 +1,32 @@
+<svg width="800" height="500" viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Depth map for 3D effect - grayscale where white = near, black = far -->
+  <defs>
+    <radialGradient id="depthGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background - far -->
+  <rect width="800" height="500" fill="#000000"/>
+
+  <!-- Shoe depth shape -->
+  <path d="M150 280
+           Q120 280 100 300
+           Q80 320 80 350
+           Q80 380 120 390
+           L700 390
+           Q740 390 760 370
+           Q780 350 770 320
+           Q760 290 720 280
+           L650 280
+           Q620 200 500 180
+           Q400 160 300 180
+           Q200 200 180 260
+           L150 280 Z"
+        fill="url(#depthGradient)"/>
+
+  <!-- Higher areas (closer to viewer) -->
+  <ellipse cx="400" cy="300" rx="200" ry="60" fill="#CCCCCC"/>
+  <ellipse cx="350" cy="250" rx="100" ry="40" fill="#FFFFFF"/>
+</svg>

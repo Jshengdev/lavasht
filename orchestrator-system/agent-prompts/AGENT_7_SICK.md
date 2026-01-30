@@ -12,6 +12,7 @@ You are the GRID specialist. You own the data fetching hooks and assembling the 
 /src/hooks/useProducts.ts
 /src/hooks/useCart.ts
 /src/hooks/useWishlist.ts
+/src/components/home/ProductGridSkeleton.tsx
 /src/app/(store)/page.tsx
 ```
 
@@ -32,7 +33,7 @@ The following components already exist from other agents:
 - `TabFilter` - from Agent 3
 - `ValueProps` - from Agent 2
 
-Your job is to create the **hooks** and **assemble** the page using these existing components.
+Your job is to create the **hooks**, the **loading skeleton**, and **assemble** the page using these existing components.
 
 ---
 
@@ -58,9 +59,9 @@ Create `/src/hooks/useProducts.ts`:
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import type { Product, TabCategory } from '@/types';
+import type { Product, Category } from '@/types';
 
-export function useProducts(category?: TabCategory) {
+export function useProducts(category?: Category) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,8 +83,9 @@ export function useProducts(category?: TabCategory) {
 
       const data = await res.json();
       setProducts(data.products);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch products';
+      setError(message);
       setProducts([]);
     } finally {
       setLoading(false);
@@ -166,12 +168,12 @@ export function useCart() {
 
       const data = await res.json();
 
-      if (res.ok) {
-        await fetchCart();
-        return { success: true, item: data.item };
-      } else {
+      if (!res.ok) {
         return { success: false, error: data.error };
       }
+
+      await fetchCart();
+      return { success: true, item: data.item };
     } catch (error) {
       return { success: false, error: 'Failed to add to cart' };
     }
@@ -183,13 +185,13 @@ export function useCart() {
         method: 'DELETE',
       });
 
-      if (res.ok) {
-        await fetchCart();
-        return { success: true };
-      } else {
+      if (!res.ok) {
         const data = await res.json();
         return { success: false, error: data.error };
       }
+
+      await fetchCart();
+      return { success: true };
     } catch (error) {
       return { success: false, error: 'Failed to remove from cart' };
     }
@@ -203,13 +205,13 @@ export function useCart() {
         body: JSON.stringify({ quantity }),
       });
 
-      if (res.ok) {
-        await fetchCart();
-        return { success: true };
-      } else {
+      if (!res.ok) {
         const data = await res.json();
         return { success: false, error: data.error };
       }
+
+      await fetchCart();
+      return { success: true };
     } catch (error) {
       return { success: false, error: 'Failed to update quantity' };
     }
@@ -244,7 +246,6 @@ export function useWishlist() {
   const [loading, setLoading] = useState(false);
 
   const fetchWishlistIds = useCallback(async () => {
-    // This endpoint works without auth (returns empty array)
     try {
       const res = await fetch('/api/wishlist/ids');
       if (res.ok) {
@@ -265,13 +266,18 @@ export function useWishlist() {
       return { success: false, error: 'Please sign in to save items' };
     }
 
-    // Optimistic update
     const wasWishlisted = wishlistedIds.includes(productId);
-    setWishlistedIds((prev) =>
-      wasWishlisted
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+
+    const updateIds = (revert: boolean) => {
+      const shouldAdd = revert ? wasWishlisted : !wasWishlisted;
+      setWishlistedIds((prev) =>
+        shouldAdd
+          ? [...prev, productId]
+          : prev.filter((id) => id !== productId)
+      );
+    };
+
+    updateIds(false);
 
     try {
       const res = await fetch('/api/wishlist', {
@@ -283,23 +289,13 @@ export function useWishlist() {
       const data = await res.json();
 
       if (!res.ok) {
-        // Revert optimistic update
-        setWishlistedIds((prev) =>
-          wasWishlisted
-            ? [...prev, productId]
-            : prev.filter((id) => id !== productId)
-        );
+        updateIds(true);
         return { success: false, error: data.error };
       }
 
       return { success: true, action: data.action };
     } catch (error) {
-      // Revert optimistic update
-      setWishlistedIds((prev) =>
-        wasWishlisted
-          ? [...prev, productId]
-          : prev.filter((id) => id !== productId)
-      );
+      updateIds(true);
       return { success: false, error: 'Failed to update wishlist' };
     }
   };
@@ -316,81 +312,106 @@ export function useWishlist() {
 }
 ```
 
-## TASK 4: Assemble Home Page (PIXEL-PERFECT)
+## TASK 4: Create ProductGridSkeleton Component
+
+Create `/src/components/home/ProductGridSkeleton.tsx`:
+
+```typescript
+import type { ReactElement } from 'react';
+
+interface ProductGridSkeletonProps {
+  count?: number;
+}
+
+export default function ProductGridSkeleton({ count = 8 }: ProductGridSkeletonProps): ReactElement {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[16px] md:gap-[20px] lg:gap-[24px]">
+      {[...Array(count)].map((_, i) => (
+        <div key={i} className="w-[270px] animate-pulse">
+          <div className="w-[270px] h-[270px] bg-[#E5E5E5] rounded-[4px]" />
+          <div className="p-[16px] space-y-[8px]">
+            <div className="h-[16px] bg-[#E5E5E5] rounded w-3/4" />
+            <div className="h-[16px] bg-[#E5E5E5] rounded w-1/2" />
+            <div className="h-[16px] bg-[#E5E5E5] rounded w-1/3" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+## TASK 5: Assemble Home Page (PIXEL-PERFECT)
 
 Update `/src/app/(store)/page.tsx`:
 
 ```typescript
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactElement } from 'react';
 import HeroSection from '@/components/home/HeroSection';
 import TabFilter from '@/components/home/TabFilter';
 import ProductGrid from '@/components/home/ProductGrid';
+import ProductGridSkeleton from '@/components/home/ProductGridSkeleton';
 import ValueProps from '@/components/home/ValueProps';
 import { useProducts } from '@/hooks/useProducts';
 import { useCart } from '@/hooks/useCart';
 import { useWishlist } from '@/hooks/useWishlist';
-import type { TabCategory } from '@/types';
+import type { Category } from '@/types';
 
-export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<TabCategory>('new-arrivals');
+export default function HomePage(): ReactElement {
+  const [activeTab, setActiveTab] = useState<Category>('new-arrivals');
 
-  // Data fetching hooks
   const { products, loading } = useProducts(activeTab);
   const { addToCart } = useCart();
   const { wishlistedIds, toggleWishlist } = useWishlist();
 
-  // Handlers
-  const handleAddToCart = async (productId: string) => {
+  async function handleAddToCart(productId: string): Promise<void> {
     const result = await addToCart(productId);
     if (!result.success) {
       // TODO: Show toast notification
       console.log('Add to cart:', result.error);
     }
-  };
+  }
 
-  const handleToggleWishlist = async (productId: string) => {
+  async function handleToggleWishlist(productId: string): Promise<void> {
     const result = await toggleWishlist(productId);
     if (!result.success) {
       // TODO: Show toast notification
       console.log('Wishlist:', result.error);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-[#F4F4F4]">
-      {/* Hero Section - from Agent 4 */}
       <HeroSection />
 
-      {/* Products Section */}
       <section className="pt-[60px] pb-[112px]">
         <div className="mx-auto max-w-[1370px] px-[20px]">
-          {/* Tab Filter - gap 40px below tabs */}
           <div className="mb-[40px]">
             <TabFilter activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
 
-          {/* Product Grid */}
-          <ProductGrid
-            products={products}
-            wishlistedIds={wishlistedIds}
-            onAddToCart={handleAddToCart}
-            onToggleWishlist={handleToggleWishlist}
-          />
-
-          {/* Loading skeleton handled inside ProductGrid */}
+          {loading ? (
+            <ProductGridSkeleton count={8} />
+          ) : (
+            <ProductGrid
+              products={products}
+              wishlistedIds={wishlistedIds}
+              onAddToCart={handleAddToCart}
+              onToggleWishlist={handleToggleWishlist}
+            />
+          )}
         </div>
       </section>
 
-      {/* Value Props - from Agent 2 */}
       <ValueProps />
     </div>
   );
 }
 ```
 
-## TASK 5: Create hooks index file (optional)
+## TASK 6: Create hooks index file (optional)
 
 Create `/src/hooks/index.ts` for cleaner imports:
 
@@ -429,4 +450,5 @@ When complete, you should have created:
 - `/src/hooks/useCart.ts`
 - `/src/hooks/useWishlist.ts`
 - `/src/hooks/index.ts` (optional)
+- `/src/components/home/ProductGridSkeleton.tsx`
 - Updated `/src/app/(store)/page.tsx`

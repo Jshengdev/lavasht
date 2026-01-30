@@ -242,7 +242,7 @@ const tabs: { id: TabCategory; label: string }[] = [
 
 export default function TabFilter({ activeTab, onTabChange }: TabFilterProps) {
   return (
-    <div className="flex items-center gap-[16px]">
+    <div data-animate="tabs" className="flex items-center gap-[16px]">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
 
@@ -452,6 +452,7 @@ export default function ProductGrid({
       {products.map((product) => (
         <motion.div
           key={product.id}
+          data-animate="product"
           variants={{
             hidden: { opacity: 0, y: 20 },
             visible: { opacity: 1, y: 0 },

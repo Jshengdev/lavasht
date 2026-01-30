@@ -101,7 +101,7 @@ export default function HeroSection() {
   }, [mouseX, mouseY]);
 
   return (
-    <section className="w-full flex justify-center py-[40px] bg-page-bg">
+    <section data-animate="hero" className="w-full flex justify-center py-[40px] bg-page-bg">
       <div
         ref={containerRef}
         className="relative w-[1090px] h-[578px] bg-[#F4F4F4] overflow-hidden"

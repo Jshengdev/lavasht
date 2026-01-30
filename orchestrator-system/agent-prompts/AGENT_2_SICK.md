@@ -11,6 +11,7 @@ You are the LAYOUT specialist. You own the page shell components.
 ```
 /src/components/layout/PromoBanner.tsx
 /src/components/layout/Header.tsx
+/src/components/layout/HeaderWithAuth.tsx
 /src/components/layout/Footer.tsx
 /src/components/home/ValueProps.tsx
 /src/app/(store)/layout.tsx
@@ -94,7 +95,7 @@ Create `/src/components/layout/PromoBanner.tsx`:
 // Figma specs: height 41px, bg #4A4C6C, fontSize 14px, fontWeight 400
 export default function PromoBanner() {
   return (
-    <div className="w-full h-[41px] bg-promo-banner flex items-center justify-center">
+    <div data-animate="promo" className="w-full h-[41px] bg-promo-banner flex items-center justify-center">
       <p className="text-[14px] font-normal text-white">
         New here? Save 20% with code: <span className="font-semibold">YES4</span>
       </p>
@@ -110,16 +111,23 @@ Create `/src/components/layout/Header.tsx`:
 ```typescript
 'use client';
 
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Heart, ShoppingCart, User } from 'lucide-react';
 
 // Figma specs: height 70px, padding 20px, nav fontSize 14px fontWeight 500, icons 24px gap 16px
 
-export default function Header() {
+interface HeaderProps {
+  isLoggedIn?: boolean;
+  onAccountClick?: () => void;
+  userMenu?: ReactNode;
+}
+
+export default function Header({ isLoggedIn = false, onAccountClick, userMenu }: HeaderProps) {
   const navItems = ['Women', 'Men', 'Kids', 'Sale', 'New', 'Brands'];
 
   return (
-    <header className="w-full bg-white">
+    <header data-animate="header" className="w-full bg-white">
       <div className="mx-auto max-w-content h-[70px] px-[20px] flex items-center justify-between">
         {/* Logo - Bird/arrow geometric icon */}
         <Link href="/" className="flex items-center gap-2">
@@ -165,12 +173,17 @@ export default function Header() {
           >
             <ShoppingCart className="w-[24px] h-[24px] text-text-primary" strokeWidth={1.5} />
           </button>
-          <button
-            className="p-1 hover:opacity-70 transition-opacity"
-            aria-label="Account"
-          >
-            <User className="w-[24px] h-[24px] text-text-primary" strokeWidth={1.5} />
-          </button>
+          {isLoggedIn && userMenu ? (
+            userMenu
+          ) : (
+            <button
+              className="p-1 hover:opacity-70 transition-opacity"
+              aria-label="Account"
+              onClick={onAccountClick}
+            >
+              <User className="w-[24px] h-[24px] text-text-primary" strokeWidth={1.5} />
+            </button>
+          )}
         </div>
       </div>
     </header>
@@ -178,7 +191,48 @@ export default function Header() {
 }
 ```
 
-## TASK 5: Create Footer (PIXEL-PERFECT)
+## TASK 5: Create HeaderWithAuth (Auth Integration)
+
+Create `/src/components/layout/HeaderWithAuth.tsx`:
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import Header from './Header';
+import SignInModal from '@/components/auth/SignInModal';
+import SignUpModal from '@/components/auth/SignUpModal';
+import UserMenu from '@/components/auth/UserMenu';
+
+export default function HeaderWithAuth() {
+  const { data: session } = useSession();
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+
+  return (
+    <>
+      <Header
+        isLoggedIn={!!session}
+        onAccountClick={() => !session && setShowSignIn(true)}
+        userMenu={session ? <UserMenu /> : null}
+      />
+      <SignInModal
+        isOpen={showSignIn}
+        onClose={() => setShowSignIn(false)}
+        onSwitchToSignUp={() => { setShowSignIn(false); setShowSignUp(true); }}
+      />
+      <SignUpModal
+        isOpen={showSignUp}
+        onClose={() => setShowSignUp(false)}
+        onSwitchToSignIn={() => { setShowSignUp(false); setShowSignIn(true); }}
+      />
+    </>
+  );
+}
+```
+
+## TASK 6: Create Footer (PIXEL-PERFECT)
 
 Create `/src/components/layout/Footer.tsx`:
 
@@ -299,7 +353,7 @@ export default function Footer() {
 }
 ```
 
-## TASK 6: Create ValueProps (PIXEL-PERFECT)
+## TASK 7: Create ValueProps (PIXEL-PERFECT)
 
 Create `/src/components/home/ValueProps.tsx`:
 
@@ -362,7 +416,7 @@ export default function ValueProps() {
 }
 ```
 
-## TASK 7: Create Store Layout
+## TASK 8: Create Store Layout
 
 Create directory structure and `/src/app/(store)/layout.tsx`:
 
@@ -376,8 +430,9 @@ Create `/src/app/(store)/layout.tsx`:
 
 ```typescript
 import PromoBanner from '@/components/layout/PromoBanner';
-import Header from '@/components/layout/Header';
+import HeaderWithAuth from '@/components/layout/HeaderWithAuth';
 import Footer from '@/components/layout/Footer';
+import PageLoadAnimation from '@/components/animations/PageLoadAnimation';
 
 export default function StoreLayout({
   children,
@@ -386,8 +441,9 @@ export default function StoreLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col bg-page-bg">
+      <PageLoadAnimation />
       <PromoBanner />
-      <Header />
+      <HeaderWithAuth />
       <main className="flex-1">
         {children}
       </main>
@@ -397,7 +453,7 @@ export default function StoreLayout({
 }
 ```
 
-## TASK 8: Create Placeholder Home Page
+## TASK 9: Create Placeholder Home Page
 
 Create `/src/app/(store)/page.tsx`:
 
@@ -433,11 +489,13 @@ npx tsc --noEmit
 # Dev server runs
 npm run dev
 # Visit http://localhost:3000 - should see layout with:
-# - Purple promo banner (41px tall)
-# - White header with logo, nav, icons
+# - Purple promo banner (41px tall) with data-animate="promo"
+# - White header with logo, nav, icons with data-animate="header"
 # - Gray page background (#F4F4F4)
 # - Value props section with circular icons
 # - Dark footer with links and social icons
+# - Page load animation sequence
+# - Auth modals when clicking account icon (when not logged in)
 ```
 
 ---
@@ -448,6 +506,7 @@ When complete, you should have created:
 - `/tailwind.config.ts` (updated)
 - `/src/components/layout/PromoBanner.tsx`
 - `/src/components/layout/Header.tsx`
+- `/src/components/layout/HeaderWithAuth.tsx`
 - `/src/components/layout/Footer.tsx`
 - `/src/components/home/ValueProps.tsx`
 - `/src/app/(store)/layout.tsx`
