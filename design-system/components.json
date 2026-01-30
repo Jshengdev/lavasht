@@ -1,0 +1,346 @@
+{
+  "page": {
+    "width": "1440px",
+    "minHeight": "2919px",
+    "contentWidth": "1370px",
+    "backgroundColor": "#F4F4F4",
+    "sectionGap": "112px"
+  },
+  "promoBanner": {
+    "width": "100%",
+    "height": "41px",
+    "paddingY": "12px",
+    "backgroundColor": "#4A4C6C",
+    "textColor": "#FFFFFF",
+    "textAlign": "center",
+    "fontSize": "14px",
+    "fontWeight": "400",
+    "text": "New here? Save 20% with code: YES4"
+  },
+  "header": {
+    "width": "1370px",
+    "height": "70px",
+    "padding": "20px",
+    "gap": "752px",
+    "backgroundColor": "#FFFFFF",
+    "logo": {
+      "type": "svg",
+      "description": "Bird/arrow geometric icon - black"
+    },
+    "nav": {
+      "items": ["Women", "Men", "Kids", "Sale", "New", "Brands"],
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "textColor": "#333333"
+    },
+    "icons": {
+      "size": "24px",
+      "gap": "16px",
+      "color": "#333333",
+      "items": ["heart", "cart", "user"]
+    }
+  },
+  "hero": {
+    "width": "1090px",
+    "height": "578px",
+    "backgroundColor": "#F4F4F4",
+    "backgroundText": {
+      "text": "SHOP",
+      "style": "Large faded background text"
+    },
+    "labels": [
+      {
+        "text": "ADJUSTABLE",
+        "position": "top-left",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "color": "#333333",
+        "letterSpacing": "2px"
+      },
+      {
+        "text": "SOFT PAD",
+        "position": "bottom-right",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "color": "#333333",
+        "letterSpacing": "2px"
+      }
+    ],
+    "shoeImage": {
+      "description": "3D shoe with depth map parallax effect",
+      "placeholder": "/images/hero-shoe.png"
+    }
+  },
+  "productSection": {
+    "frameId": "639",
+    "width": "1279px",
+    "height": "1058px",
+    "gap": "166px"
+  },
+  "tabFilter": {
+    "gap": "16px",
+    "tabs": [
+      { "id": "new-arrivals", "label": "NEW ARRIVALS" },
+      { "id": "trending", "label": "WHAT'S TRENDING" }
+    ],
+    "activeTab": {
+      "style": "filled",
+      "width": "hug",
+      "minWidth": "140px",
+      "height": "45px",
+      "paddingTop": "12px",
+      "paddingRight": "20px",
+      "paddingBottom": "11px",
+      "paddingLeft": "20px",
+      "borderRadius": "5px",
+      "backgroundColor": "#333333",
+      "textColor": "#FFFFFF",
+      "border": "1px solid #F4F4F4",
+      "fontSize": "14px",
+      "fontWeight": "500"
+    },
+    "inactiveTab": {
+      "style": "outlined",
+      "width": "hug",
+      "minWidth": "250px",
+      "height": "57px",
+      "paddingTop": "16px",
+      "paddingRight": "33px",
+      "paddingBottom": "16px",
+      "paddingLeft": "33px",
+      "borderRadius": "100px",
+      "backgroundColor": "transparent",
+      "border": "4px solid #77794E",
+      "borderHover": "4px solid #9FA16D",
+      "textColor": "#77794E",
+      "textColorHover": "#9FA16D",
+      "fontSize": "14px",
+      "fontWeight": "500"
+    },
+    "animation": {
+      "type": "smart-animate",
+      "easing": "ease-in-out-back",
+      "duration": "300ms"
+    }
+  },
+  "productCard": {
+    "width": "270px",
+    "height": "350px",
+    "flow": "vertical",
+    "gap": "16px",
+    "backgroundColor": "#FFFFFF",
+    "borderRadius": "4px",
+    "imageContainer": {
+      "width": "270px",
+      "height": "270px",
+      "aspectRatio": "1/1",
+      "backgroundColor": "#F5F5F5"
+    },
+    "saleBadge": {
+      "position": { "top": "12px", "left": "12px" },
+      "backgroundColor": "#DB4444",
+      "textColor": "#FFFFFF",
+      "borderRadius": "4px",
+      "fontSize": "12px",
+      "fontWeight": "500",
+      "format": "-XX%"
+    },
+    "heartIcon": {
+      "containerSize": "34px",
+      "iconSize": "24px",
+      "paddingTop": "4px",
+      "paddingBottom": "4px",
+      "paddingLeft": "3px",
+      "paddingRight": "3px",
+      "position": { "top": "12px", "right": "12px" },
+      "emptyColor": "#333333",
+      "filledColor": "#DB4444"
+    },
+    "addToCartButton": {
+      "position": "bottom",
+      "width": "100%",
+      "backgroundColor": "#333333",
+      "textColor": "#FFFFFF",
+      "animation": "slide-up-on-hover"
+    },
+    "content": {
+      "padding": "16px",
+      "gap": "8px"
+    },
+    "productName": {
+      "fontSize": "16px",
+      "fontWeight": "500",
+      "color": "#333333"
+    },
+    "price": {
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "color": "#333333"
+    },
+    "salePrice": {
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "color": "#DB4444"
+    },
+    "originalPrice": {
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "color": "#7F7F7F",
+      "textDecoration": "line-through"
+    },
+    "rating": {
+      "starSize": "16px",
+      "starColorFilled": "#FFAD33",
+      "starColorEmpty": "#E0E0E0",
+      "countFontSize": "14px",
+      "countColor": "#7F7F7F"
+    }
+  },
+  "productGrid": {
+    "columns": {
+      "desktop": 4,
+      "tablet": 3,
+      "mobile": 2
+    },
+    "gap": {
+      "desktop": "24px",
+      "tablet": "20px",
+      "mobile": "16px"
+    }
+  },
+  "valueProps": {
+    "columns": 3,
+    "gap": "48px",
+    "backgroundColor": "#FFFFFF",
+    "paddingY": "64px",
+    "item": {
+      "iconContainer": {
+        "outerSize": "80px",
+        "outerBg": "#F3F3F3",
+        "innerSize": "56px",
+        "innerBg": "#333333",
+        "borderRadius": "50%"
+      },
+      "icon": {
+        "size": "24px",
+        "color": "#FFFFFF"
+      },
+      "title": {
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "color": "#333333",
+        "marginTop": "24px",
+        "textTransform": "uppercase"
+      },
+      "description": {
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "#7F7F7F",
+        "marginTop": "8px"
+      }
+    },
+    "items": [
+      {
+        "icon": "truck",
+        "title": "FREE AND FAST DELIVERY",
+        "description": "Free delivery for all orders over $140"
+      },
+      {
+        "icon": "headphones",
+        "title": "24/7 CUSTOMER SERVICE",
+        "description": "Friendly 24/7 customer support"
+      },
+      {
+        "icon": "refresh",
+        "title": "MONEY BACK GUARANTEE",
+        "description": "We return money within 30 days"
+      }
+    ]
+  },
+  "footer": {
+    "width": "1440px",
+    "height": "451px",
+    "paddingTop": "58px",
+    "paddingBottom": "35px",
+    "paddingX": "144px",
+    "gap": "43px",
+    "backgroundColor": "#333333",
+    "textColor": "#FFFFFF",
+    "mutedColor": "#7F7F7F",
+    "logo": {
+      "text": "Logo",
+      "fontSize": "24px",
+      "fontWeight": "700"
+    },
+    "address": {
+      "label": "Address:",
+      "value": "USA, California"
+    },
+    "contact": {
+      "label": "Contact:",
+      "phone": "(800) 123 4567",
+      "email": "joanie2k@gmail.com"
+    },
+    "linkSections": [
+      {
+        "title": "Shop",
+        "links": ["New Arrivals", "Trending", "Sale"]
+      },
+      {
+        "title": "Help",
+        "links": ["FAQs", "Shipping", "Returns"]
+      },
+      {
+        "title": "About",
+        "links": ["Our Story", "Careers", "Contact"]
+      }
+    ],
+    "socialIcons": {
+      "icons": ["facebook", "instagram", "twitter", "linkedin", "youtube"],
+      "size": "20px",
+      "gap": "16px",
+      "color": "#FFFFFF"
+    },
+    "copyright": {
+      "text": "© 2023 Joanie. All rights reserved.",
+      "fontSize": "14px",
+      "color": "#7F7F7F",
+      "textAlign": "center"
+    }
+  },
+  "button": {
+    "variants": {
+      "dark": {
+        "backgroundColor": "#333333",
+        "textColor": "#FFFFFF",
+        "border": "1px solid #F4F4F4",
+        "borderRadius": "5px"
+      },
+      "accent": {
+        "backgroundColor": "transparent",
+        "textColor": "#77794E",
+        "border": "4px solid #77794E",
+        "borderRadius": "100px",
+        "hoverBorderColor": "#9FA16D",
+        "hoverTextColor": "#9FA16D"
+      }
+    },
+    "sizes": {
+      "sm": {
+        "paddingX": "16px",
+        "paddingY": "8px",
+        "fontSize": "12px"
+      },
+      "md": {
+        "paddingX": "20px",
+        "paddingY": "12px",
+        "fontSize": "14px"
+      },
+      "lg": {
+        "paddingX": "33px",
+        "paddingY": "16px",
+        "fontSize": "16px"
+      }
+    }
+  }
+}
