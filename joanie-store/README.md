@@ -1,36 +1,157 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Joanie Store
+
+A modern e-commerce storefront built with Next.js 16, featuring product browsing, user authentication, cart, and wishlist functionality.
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS 4
+- **Database:** PostgreSQL via Supabase
+- **ORM:** Prisma with PostgreSQL adapter
+- **Auth:** NextAuth.js (credentials provider)
+- **Animations:** Framer Motion + GSAP
+
+## Features
+
+- Product grid with category filtering (New Arrivals / Trending)
+- User authentication (sign up, sign in, sign out)
+- Shopping cart (add, remove, update quantity)
+- Wishlist with optimistic updates
+- Responsive design
+- Page load animations
+- Interactive hero section with parallax effect
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- PostgreSQL database (Supabase recommended)
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Generate Prisma client
+npx prisma generate
+```
+
+### Environment Variables
+
+Create a `.env` file based on `.env.example`:
+
+```env
+DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT].supabase.co:5432/postgres"
+NEXTAUTH_SECRET="your-secret-here"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+Generate a secret:
+```bash
+openssl rand -base64 32
+```
+
+### Database Setup
+
+```bash
+# Push schema to database
+npx prisma db push
+
+# Seed with sample products
+npx prisma db seed
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── (store)/          # Store layout group
+│   │   ├── layout.tsx    # Store layout (header, footer)
+│   │   └── page.tsx      # Homepage
+│   ├── api/              # API routes
+│   │   ├── auth/         # NextAuth + signup
+│   │   ├── cart/         # Cart CRUD
+│   │   ├── products/     # Product listing
+│   │   └── wishlist/     # Wishlist toggle
+│   └── layout.tsx        # Root layout
+├── components/
+│   ├── animations/       # GSAP page animations
+│   ├── auth/             # Auth modals, user menu
+│   ├── home/             # Hero, tabs, product grid
+│   ├── layout/           # Header, footer, promo banner
+│   └── ui/               # Badge, heart icon, star rating
+├── hooks/                # useProducts, useCart, useWishlist
+├── lib/                  # Prisma client, auth config
+└── types/                # TypeScript interfaces
+```
 
-## Learn More
+## API Routes
 
-To learn more about Next.js, take a look at the following resources:
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/products?category=` | List products by category |
+| POST | `/api/auth/signup` | Create new user |
+| GET | `/api/cart` | Get user's cart |
+| POST | `/api/cart` | Add to cart |
+| PATCH | `/api/cart/[id]` | Update quantity |
+| DELETE | `/api/cart/[id]` | Remove from cart |
+| GET | `/api/wishlist/ids` | Get wishlisted product IDs |
+| POST | `/api/wishlist` | Toggle wishlist item |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Database Schema
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+User
+├── id, email, name, password
+├── CartItem[]
+└── WishlistItem[]
 
-## Deploy on Vercel
+Product
+├── id, name, price, salePrice, image
+├── rating, reviewCount, category, isOnSale
+├── CartItem[]
+└── WishlistItem[]
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+CartItem (userId + productId unique)
+└── quantity
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+WishlistItem (userId + productId unique)
+```
+
+## Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+## Deployment
+
+```bash
+# Build and deploy to Vercel
+npx vercel --prod
+```
+
+Set environment variables in Vercel dashboard.
+
+## Archive
+
+Development orchestrator prompts are archived in `docs/archive/` for reference.
+
+## License
+
+MIT

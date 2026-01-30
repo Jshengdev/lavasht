@@ -5,7 +5,7 @@ import { prisma } from './prisma';
 import bcrypt from 'bcryptjs';
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+  adapter: PrismaAdapter(prisma) as NextAuthOptions['adapter'],
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -18,54 +18,33 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Please enter email and password');
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
 
-        if (!user || !user.password) {
+        if (!user?.password) {
           throw new Error('No user found with this email');
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isPasswordValid) {
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isValid) {
           throw new Error('Invalid password');
         }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-        };
+        return { id: user.id, email: user.email, name: user.name, image: user.image };
       },
     }),
   ],
-  session: {
-    strategy: 'jwt',
-  },
+  session: { strategy: 'jwt' },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
+      if (user) token.id = user.id;
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-      }
+      if (session.user) session.user.id = token.id as string;
       return session;
     },
   },
-  pages: {
-    signIn: '/',
-  },
+  pages: { signIn: '/' },
 };
 
-export function getAuthSession() {
-  return getServerSession(authOptions);
-}
+export const getAuthSession = () => getServerSession(authOptions);

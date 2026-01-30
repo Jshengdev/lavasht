@@ -23,75 +23,70 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const displayPrice = product.isOnSale && product.salePrice
-    ? product.salePrice
-    : product.price;
-
-  const discountPercent = product.isOnSale && product.salePrice
+  const displayPrice = product.salePrice ?? product.price;
+  const discountPercent = product.salePrice
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
 
   return (
-    <motion.div
-      className="w-[270px] flex flex-col bg-white rounded-[4px] overflow-hidden"
+    <div
+      className="w-[270px] flex flex-col bg-white rounded overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
     >
+      {/* Image Container */}
       <div className="relative w-[270px] h-[270px] bg-[#F5F5F5] overflow-hidden">
         <Image
           src={product.image}
           alt={product.name}
           fill
-          className="object-contain p-[16px]"
+          className="object-contain p-4"
         />
 
-        {product.isOnSale && (
-          <div className="absolute top-[12px] left-[12px]">
+        {/* Sale Badge */}
+        {product.isOnSale && discountPercent > 0 && (
+          <div className="absolute top-3 left-3">
             <Badge variant="sale">-{discountPercent}%</Badge>
           </div>
         )}
 
-        <div className="absolute top-[12px] right-[12px]">
+        {/* Wishlist Button */}
+        <div className="absolute top-3 right-3">
           <HeartIcon
             filled={isWishlisted}
             onClick={() => onToggleWishlist?.(product.id)}
           />
         </div>
 
+        {/* Add to Cart Button */}
         <AnimatePresence>
           {isHovered && (
-            <motion.div
+            <motion.button
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ duration: 0.2 }}
-              className="absolute bottom-0 left-0 right-0"
+              onClick={() => onAddToCart?.(product.id)}
+              className="absolute bottom-0 left-0 right-0 h-[41px] bg-[#333333] text-white text-sm font-medium hover:bg-[#444444]"
             >
-              <button
-                onClick={() => onAddToCart?.(product.id)}
-                className="w-full h-[41px] bg-[#333333] text-white text-[14px] font-medium hover:bg-[#444444] transition-colors"
-              >
-                Add To Cart
-              </button>
-            </motion.div>
+              Add To Cart
+            </motion.button>
           )}
         </AnimatePresence>
       </div>
 
-      <div className="p-[16px] flex flex-col gap-[8px]">
-        <h3 className="text-[16px] font-medium text-[#333333] line-clamp-1">
+      {/* Product Info */}
+      <div className="p-4 flex flex-col gap-2">
+        <h3 className="text-base font-medium text-[#333333] line-clamp-1">
           {product.name}
         </h3>
 
-        <div className="flex items-center gap-[12px]">
-          <span className={`text-[16px] font-semibold ${product.isOnSale ? 'text-[#DB4444]' : 'text-[#333333]'}`}>
+        <div className="flex items-center gap-3">
+          <span className={`text-base font-semibold ${product.isOnSale ? 'text-[#DB4444]' : 'text-[#333333]'}`}>
             ${displayPrice}
           </span>
           {product.isOnSale && product.salePrice && (
-            <span className="text-[14px] font-normal text-[#7F7F7F] line-through">
+            <span className="text-sm text-[#7F7F7F] line-through">
               ${product.price}
             </span>
           )}
@@ -99,6 +94,6 @@ export default function ProductCard({
 
         <StarRating rating={product.rating} reviewCount={product.reviewCount} />
       </div>
-    </motion.div>
+    </div>
   );
 }

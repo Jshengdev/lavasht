@@ -1,47 +1,33 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
 export function useWishlist() {
   const { data: session } = useSession();
   const [wishlistedIds, setWishlistedIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  const fetchWishlistIds = useCallback(async () => {
-    // This endpoint works without auth (returns empty array)
-    try {
+  useEffect(() => {
+    async function fetchWishlist() {
       const res = await fetch('/api/wishlist/ids');
       if (res.ok) {
         const data = await res.json();
         setWishlistedIds(data.productIds);
       }
-    } catch (error) {
-      console.error('Failed to fetch wishlist:', error);
     }
-  }, []);
+    fetchWishlist();
+  }, [session?.user?.id]);
 
-  useEffect(() => {
-    fetchWishlistIds();
-  }, [fetchWishlistIds, session?.user?.id]);
-
-  const toggleWishlist = async (productId: string) => {
+  async function toggleWishlist(productId: string) {
     if (!session?.user?.id) {
       return { success: false, error: 'Please sign in to save items' };
     }
 
+    // Optimistic update
     const wasWishlisted = wishlistedIds.includes(productId);
-
-    const updateIds = (revert: boolean) => {
-      const shouldAdd = revert ? wasWishlisted : !wasWishlisted;
-      setWishlistedIds((prev) =>
-        shouldAdd
-          ? [...prev, productId]
-          : prev.filter((id) => id !== productId)
-      );
-    };
-
-    updateIds(false);
+    setWishlistedIds(prev =>
+      wasWishlisted ? prev.filter(id => id !== productId) : [...prev, productId]
+    );
 
     try {
       const res = await fetch('/api/wishlist', {
@@ -50,27 +36,28 @@ export function useWishlist() {
         body: JSON.stringify({ productId }),
       });
 
-      const data = await res.json();
-
       if (!res.ok) {
-        updateIds(true);
+        // Revert on error
+        setWishlistedIds(prev =>
+          wasWishlisted ? [...prev, productId] : prev.filter(id => id !== productId)
+        );
+        const data = await res.json();
         return { success: false, error: data.error };
       }
 
-      return { success: true, action: data.action };
-    } catch (error) {
-      updateIds(true);
+      return { success: true };
+    } catch {
+      // Revert on error
+      setWishlistedIds(prev =>
+        wasWishlisted ? [...prev, productId] : prev.filter(id => id !== productId)
+      );
       return { success: false, error: 'Failed to update wishlist' };
     }
-  };
-
-  const isWishlisted = (productId: string) => wishlistedIds.includes(productId);
+  }
 
   return {
     wishlistedIds,
-    loading,
     toggleWishlist,
-    isWishlisted,
-    refreshWishlist: fetchWishlistIds,
+    isWishlisted: (id: string) => wishlistedIds.includes(id),
   };
 }

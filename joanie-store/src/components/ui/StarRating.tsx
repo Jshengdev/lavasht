@@ -5,31 +5,22 @@ interface StarRatingProps {
   reviewCount: number;
 }
 
-function getStarClass(index: number, fullStars: number, hasHalfStar: boolean): string {
-  if (index < fullStars) {
-    return 'fill-[#FFAD33] text-[#FFAD33]';
-  }
-  if (index === fullStars && hasHalfStar) {
-    return 'fill-[#FFAD33]/50 text-[#FFAD33]';
-  }
-  return 'fill-[#E0E0E0] text-[#E0E0E0]';
-}
-
 export default function StarRating({ rating, reviewCount }: StarRatingProps) {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;
 
   return (
-    <div className="flex items-center gap-[8px]">
-      <div className="flex gap-[2px]">
-        {[...Array(5)].map((_, i) => (
-          <Star
-            key={i}
-            className={`w-[16px] h-[16px] ${getStarClass(i, fullStars, hasHalfStar)}`}
-          />
-        ))}
+    <div className="flex items-center gap-2">
+      <div className="flex gap-0.5">
+        {[0, 1, 2, 3, 4].map(i => {
+          let fill = 'fill-[#E0E0E0] text-[#E0E0E0]';
+          if (i < fullStars) fill = 'fill-[#FFAD33] text-[#FFAD33]';
+          else if (i === fullStars && hasHalfStar) fill = 'fill-[#FFAD33]/50 text-[#FFAD33]';
+
+          return <Star key={i} className={`w-4 h-4 ${fill}`} />;
+        })}
       </div>
-      <span className="text-[14px] font-normal text-[#7F7F7F]">({reviewCount})</span>
+      <span className="text-sm text-[#7F7F7F]">({reviewCount})</span>
     </div>
   );
 }

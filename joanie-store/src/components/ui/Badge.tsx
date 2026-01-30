@@ -4,15 +4,10 @@ interface BadgeProps {
 }
 
 export default function Badge({ children, variant = 'sale' }: BadgeProps) {
-  const variantClasses = {
-    sale: 'bg-[#DB4444] text-white',
-    new: 'bg-[#00FF66] text-white',
-  };
+  const bg = variant === 'sale' ? 'bg-[#DB4444]' : 'bg-[#00FF66]';
 
   return (
-    <span
-      className={`inline-flex items-center justify-center px-[8px] py-[4px] text-[12px] font-medium rounded-[4px] ${variantClasses[variant]}`}
-    >
+    <span className={`inline-flex items-center px-2 py-1 text-xs font-medium text-white rounded ${bg}`}>
       {children}
     </span>
   );

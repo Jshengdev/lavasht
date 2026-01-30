@@ -1,2 +1,0 @@
-# lavasht
-website

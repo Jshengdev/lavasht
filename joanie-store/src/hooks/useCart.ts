@@ -1,53 +1,37 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import type { CartItem } from '@/types';
 
-interface CartState {
-  items: CartItem[];
-  totalItems: number;
-  totalPrice: number;
-}
-
 export function useCart() {
   const { data: session } = useSession();
-  const [state, setState] = useState<CartState>({
-    items: [],
-    totalItems: 0,
-    totalPrice: 0,
-  });
-  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  const fetchCart = useCallback(async () => {
+  async function fetchCart() {
     if (!session?.user?.id) {
-      setState({ items: [], totalItems: 0, totalPrice: 0 });
+      setItems([]);
+      setTotalItems(0);
+      setTotalPrice(0);
       return;
     }
 
-    setLoading(true);
-    try {
-      const res = await fetch('/api/cart');
-      if (res.ok) {
-        const data = await res.json();
-        setState({
-          items: data.items,
-          totalItems: data.totalItems,
-          totalPrice: data.totalPrice,
-        });
-      }
-    } catch (error) {
-      console.error('Failed to fetch cart:', error);
-    } finally {
-      setLoading(false);
+    const res = await fetch('/api/cart');
+    if (res.ok) {
+      const data = await res.json();
+      setItems(data.items);
+      setTotalItems(data.totalItems);
+      setTotalPrice(data.totalPrice);
     }
-  }, [session?.user?.id]);
+  }
 
   useEffect(() => {
     fetchCart();
-  }, [fetchCart]);
+  }, [session?.user?.id]);
 
-  const addToCart = async (productId: string, quantity = 1) => {
+  async function addToCart(productId: string, quantity = 1) {
     if (!session?.user?.id) {
       return { success: false, error: 'Please sign in to add items to cart' };
     }
@@ -60,37 +44,30 @@ export function useCart() {
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        return { success: false, error: data.error };
-      }
+      if (!res.ok) return { success: false, error: data.error };
 
       await fetchCart();
       return { success: true, item: data.item };
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Failed to add to cart' };
     }
-  };
+  }
 
-  const removeFromCart = async (itemId: string) => {
+  async function removeFromCart(itemId: string) {
     try {
-      const res = await fetch(`/api/cart/${itemId}`, {
-        method: 'DELETE',
-      });
-
+      const res = await fetch(`/api/cart/${itemId}`, { method: 'DELETE' });
       if (!res.ok) {
         const data = await res.json();
         return { success: false, error: data.error };
       }
-
       await fetchCart();
       return { success: true };
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Failed to remove from cart' };
     }
-  };
+  }
 
-  const updateQuantity = async (itemId: string, quantity: number) => {
+  async function updateQuantity(itemId: string, quantity: number) {
     try {
       const res = await fetch(`/api/cart/${itemId}`, {
         method: 'PATCH',
@@ -105,19 +82,17 @@ export function useCart() {
 
       await fetchCart();
       return { success: true };
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Failed to update quantity' };
     }
-  };
+  }
 
   return {
-    items: state.items,
-    totalItems: state.totalItems,
-    totalPrice: state.totalPrice,
-    loading,
+    items,
+    totalItems,
+    totalPrice,
     addToCart,
     removeFromCart,
     updateQuantity,
-    refreshCart: fetchCart,
   };
 }

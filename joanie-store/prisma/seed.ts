@@ -1,6 +1,13 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
+import 'dotenv/config'
 
-const prisma = new PrismaClient()
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+})
+const adapter = new PrismaPg(pool)
+const prisma = new PrismaClient({ adapter })
 
 const REGULAR_PRODUCT = {
   name: 'HAVIT HV-G92 Gamepad',
@@ -27,11 +34,22 @@ async function main(): Promise<void> {
     prisma.user.deleteMany(),
   ])
 
+  // 8 products per category (images repeat 1-4 for both categories)
   const products = [
+    // new-arrivals (8 products)
     { ...REGULAR_PRODUCT, image: '/images/shoe-1.png', category: 'new-arrivals' },
     { ...REGULAR_PRODUCT, image: '/images/shoe-2.png', category: 'new-arrivals' },
     { ...REGULAR_PRODUCT, image: '/images/shoe-3.png', category: 'new-arrivals' },
     { ...SALE_PRODUCT, image: '/images/shoe-4.png', category: 'new-arrivals' },
+    { ...REGULAR_PRODUCT, image: '/images/shoe-5.png', category: 'new-arrivals' },
+    { ...SALE_PRODUCT, image: '/images/shoe-6.png', category: 'new-arrivals' },
+    { ...REGULAR_PRODUCT, image: '/images/shoe-7.png', category: 'new-arrivals' },
+    { ...SALE_PRODUCT, image: '/images/shoe-8.png', category: 'new-arrivals' },
+    // trending (8 products)
+    { ...REGULAR_PRODUCT, image: '/images/shoe-1.png', category: 'trending' },
+    { ...REGULAR_PRODUCT, image: '/images/shoe-2.png', category: 'trending' },
+    { ...REGULAR_PRODUCT, image: '/images/shoe-3.png', category: 'trending' },
+    { ...SALE_PRODUCT, image: '/images/shoe-4.png', category: 'trending' },
     { ...REGULAR_PRODUCT, image: '/images/shoe-5.png', category: 'trending' },
     { ...SALE_PRODUCT, image: '/images/shoe-6.png', category: 'trending' },
     { ...REGULAR_PRODUCT, image: '/images/shoe-7.png', category: 'trending' },
@@ -47,4 +65,7 @@ main()
     console.error(e)
     process.exit(1)
   })
-  .finally(() => prisma.$disconnect())
+  .finally(async () => {
+    await prisma.$disconnect()
+    await pool.end()
+  })

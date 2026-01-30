@@ -1,11 +1,10 @@
 'use client';
 
-import type { JSX, ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Heart, ShoppingCart, User } from 'lucide-react';
 
-const NAV_ITEMS = ['Women', 'Men', 'Kids', 'Sale', 'New', 'Brands'] as const;
+const NAV_ITEMS = ['Women', 'Men', 'Kids', 'Sale', 'New', 'Brands'];
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -13,63 +12,43 @@ interface HeaderProps {
   userMenu?: ReactNode;
 }
 
-interface IconButtonProps {
-  icon: LucideIcon;
-  label: string;
-  onClick?: () => void;
-}
-
-function IconButton({ icon: Icon, label, onClick }: IconButtonProps): JSX.Element {
-  return (
-    <button
-      className="p-1 hover:opacity-70 transition-opacity"
-      aria-label={label}
-      onClick={onClick}
-    >
-      <Icon className="w-[24px] h-[24px] text-text-primary" strokeWidth={1.5} />
-    </button>
-  );
-}
-
-export default function Header({
-  isLoggedIn = false,
-  onAccountClick,
-  userMenu
-}: HeaderProps): JSX.Element {
+export default function Header({ isLoggedIn = false, onAccountClick, userMenu }: HeaderProps) {
   return (
     <header data-animate="header" className="w-full bg-white">
-      <div className="mx-auto max-w-content h-[70px] px-[20px] flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <svg
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M8 24L16 8L24 24L16 18L8 24Z" fill="#333333" />
-          </svg>
-        </Link>
+      <div className="mx-auto max-w-[1370px] h-[70px] py-5 flex items-center justify-between">
+        {/* Logo + Nav */}
+        <div className="flex items-center gap-6">
+          <Link href="/">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M8 24L16 8L24 24L16 18L8 24Z" fill="#333333" />
+            </svg>
+          </Link>
 
-        <nav className="hidden md:flex items-center gap-[32px]">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item}
-              href="#"
-              className="text-[14px] font-medium text-text-primary hover:opacity-70 transition-opacity"
-            >
-              {item}
-            </Link>
-          ))}
-        </nav>
+          <nav className="hidden md:flex items-center gap-6">
+            {NAV_ITEMS.map(item => (
+              <Link key={item} href="#" className="text-sm font-medium text-[#333333] hover:opacity-70">
+                {item}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
-        <div className="flex items-center gap-[16px]">
-          <IconButton icon={Heart} label="Wishlist" />
-          <IconButton icon={ShoppingCart} label="Cart" />
+        {/* Icons */}
+        <div className="flex items-center gap-6">
+          <button aria-label="Wishlist" className="hover:opacity-70">
+            <Heart className="w-6 h-6 text-[#333333]" strokeWidth={1.5} />
+          </button>
+
+          <button aria-label="Cart" className="hover:opacity-70">
+            <ShoppingCart className="w-6 h-6 text-[#333333]" strokeWidth={1.5} />
+          </button>
+
           {isLoggedIn && userMenu ? (
             userMenu
           ) : (
-            <IconButton icon={User} label="Account" onClick={onAccountClick} />
+            <button aria-label="Account" onClick={onAccountClick} className="hover:opacity-70">
+              <User className="w-6 h-6 text-[#333333]" strokeWidth={1.5} />
+            </button>
           )}
         </div>
       </div>

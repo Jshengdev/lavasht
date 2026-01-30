@@ -11,27 +11,18 @@ interface SignInModalProps {
   onSwitchToSignUp: () => void;
 }
 
-export default function SignInModal({
-  isOpen,
-  onClose,
-  onSwitchToSignUp,
-}: SignInModalProps) {
+export default function SignInModal({ isOpen, onClose, onSwitchToSignUp }: SignInModalProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
-
+    const result = await signIn('credentials', { email, password, redirect: false });
     setLoading(false);
 
     if (result?.error) {
@@ -41,7 +32,7 @@ export default function SignInModal({
       setEmail('');
       setPassword('');
     }
-  };
+  }
 
   return (
     <AnimatePresence>
@@ -59,43 +50,38 @@ export default function SignInModal({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[400px] bg-white rounded-[5px] shadow-xl z-50 p-[32px]"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[400px] bg-white rounded shadow-xl z-50 p-8"
           >
-            <button
-              onClick={onClose}
-              className="absolute top-[16px] right-[16px] text-[#7F7F7F] hover:text-[#333333] transition-colors"
-            >
-              <X className="w-[20px] h-[20px]" />
+            <button onClick={onClose} className="absolute top-4 right-4 text-[#7F7F7F] hover:text-[#333333]">
+              <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-[24px] font-bold text-[#333333] mb-[24px]">Sign In</h2>
+            <h2 className="text-2xl font-bold text-[#333333] mb-6">Sign In</h2>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-[16px]">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               {error && (
-                <div className="p-[12px] bg-[#DB4444]/10 text-[#DB4444] rounded-[5px] text-[14px]">
-                  {error}
-                </div>
+                <div className="p-3 bg-[#DB4444]/10 text-[#DB4444] rounded text-sm">{error}</div>
               )}
 
-              <div className="flex flex-col gap-[8px]">
-                <label className="text-[14px] font-medium text-[#333333]">Email</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-[#333333]">Email</label>
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-[48px] px-[16px] border border-[#E0E0E0] rounded-[5px] text-[14px] text-[#333333] placeholder-[#7F7F7F] focus:outline-none focus:border-[#333333] transition-colors"
+                  onChange={e => setEmail(e.target.value)}
+                  className="h-12 px-4 border border-[#E0E0E0] rounded text-sm focus:outline-none focus:border-[#333333]"
                   placeholder="Enter your email"
                   required
                 />
               </div>
 
-              <div className="flex flex-col gap-[8px]">
-                <label className="text-[14px] font-medium text-[#333333]">Password</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-[#333333]">Password</label>
                 <input
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-[48px] px-[16px] border border-[#E0E0E0] rounded-[5px] text-[14px] text-[#333333] placeholder-[#7F7F7F] focus:outline-none focus:border-[#333333] transition-colors"
+                  onChange={e => setPassword(e.target.value)}
+                  className="h-12 px-4 border border-[#E0E0E0] rounded text-sm focus:outline-none focus:border-[#333333]"
                   placeholder="Enter your password"
                   required
                 />
@@ -104,18 +90,15 @@ export default function SignInModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-[48px] bg-[#333333] text-white text-[14px] font-medium rounded-[5px] hover:bg-[#444444] disabled:opacity-50 transition-colors mt-[8px]"
+                className="h-12 bg-[#333333] text-white text-sm font-medium rounded hover:bg-[#444444] disabled:opacity-50 mt-2"
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
             </form>
 
-            <p className="mt-[24px] text-center text-[14px] text-[#7F7F7F]">
+            <p className="mt-6 text-center text-sm text-[#7F7F7F]">
               Don&apos;t have an account?{' '}
-              <button
-                onClick={onSwitchToSignUp}
-                className="text-[#333333] font-medium hover:underline"
-              >
+              <button onClick={onSwitchToSignUp} className="text-[#333333] font-medium hover:underline">
                 Sign Up
               </button>
             </p>
