@@ -1,8 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import type { CartItem } from '@/types';
+
+interface CartResult {
+  success: boolean;
+  error?: string;
+  item?: CartItem;
+}
 
 export function useCart() {
   const { data: session } = useSession();
@@ -10,7 +16,7 @@ export function useCart() {
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  async function fetchCart() {
+  const fetchCart = useCallback(async (): Promise<void> => {
     if (!session?.user?.id) {
       setItems([]);
       setTotalItems(0);
@@ -25,13 +31,13 @@ export function useCart() {
       setTotalItems(data.totalItems);
       setTotalPrice(data.totalPrice);
     }
-  }
+  }, [session?.user?.id]);
 
   useEffect(() => {
     fetchCart();
-  }, [session?.user?.id]);
+  }, [fetchCart]);
 
-  async function addToCart(productId: string, quantity = 1) {
+  const addToCart = useCallback(async (productId: string, quantity = 1): Promise<CartResult> => {
     if (!session?.user?.id) {
       return { success: false, error: 'Please sign in to add items to cart' };
     }
@@ -51,9 +57,9 @@ export function useCart() {
     } catch {
       return { success: false, error: 'Failed to add to cart' };
     }
-  }
+  }, [session?.user?.id, fetchCart]);
 
-  async function removeFromCart(itemId: string) {
+  const removeFromCart = useCallback(async (itemId: string): Promise<CartResult> => {
     try {
       const res = await fetch(`/api/cart/${itemId}`, { method: 'DELETE' });
       if (!res.ok) {
@@ -65,9 +71,9 @@ export function useCart() {
     } catch {
       return { success: false, error: 'Failed to remove from cart' };
     }
-  }
+  }, [fetchCart]);
 
-  async function updateQuantity(itemId: string, quantity: number) {
+  const updateQuantity = useCallback(async (itemId: string, quantity: number): Promise<CartResult> => {
     try {
       const res = await fetch(`/api/cart/${itemId}`, {
         method: 'PATCH',
@@ -85,14 +91,7 @@ export function useCart() {
     } catch {
       return { success: false, error: 'Failed to update quantity' };
     }
-  }
+  }, [fetchCart]);
 
-  return {
-    items,
-    totalItems,
-    totalPrice,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-  };
+  return { items, totalItems, totalPrice, addToCart, removeFromCart, updateQuantity };
 }

@@ -3,6 +3,8 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Heart, ShoppingCart, User } from 'lucide-react';
+import { TransitionLink } from '@/components/animations';
+import Logo from '@/components/ui/Logo';
 
 const NAV_ITEMS = ['Women', 'Men', 'Kids', 'Sale', 'New', 'Brands'];
 
@@ -10,19 +12,25 @@ interface HeaderProps {
   isLoggedIn?: boolean;
   onAccountClick?: () => void;
   userMenu?: ReactNode;
+  cartCount?: number;
+  wishlistCount?: number;
 }
 
-export default function Header({ isLoggedIn = false, onAccountClick, userMenu }: HeaderProps) {
+export default function Header({
+  isLoggedIn = false,
+  onAccountClick,
+  userMenu,
+  cartCount = 0,
+  wishlistCount = 0,
+}: HeaderProps) {
   return (
-    <header data-animate="header" className="w-full bg-white">
+    <header data-animate="header" className="w-full bg-white relative z-50">
       <div className="mx-auto max-w-[1370px] h-[70px] py-5 flex items-center justify-between">
         {/* Logo + Nav */}
         <div className="flex items-center gap-6">
-          <Link href="/">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <path d="M8 24L16 8L24 24L16 18L8 24Z" fill="#333333" />
-            </svg>
-          </Link>
+          <TransitionLink href="/" aria-label="Joanie Store Home">
+            <Logo size="md" />
+          </TransitionLink>
 
           <nav className="hidden md:flex items-center gap-6">
             {NAV_ITEMS.map(item => (
@@ -35,13 +43,23 @@ export default function Header({ isLoggedIn = false, onAccountClick, userMenu }:
 
         {/* Icons */}
         <div className="flex items-center gap-6">
-          <button aria-label="Wishlist" className="hover:opacity-70">
+          <TransitionLink href="/wishlist" aria-label="Wishlist" className="relative hover:opacity-70">
             <Heart className="w-6 h-6 text-[#333333]" strokeWidth={1.5} />
-          </button>
+            {wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#DB4444] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {wishlistCount > 9 ? '9+' : wishlistCount}
+              </span>
+            )}
+          </TransitionLink>
 
-          <button aria-label="Cart" className="hover:opacity-70">
+          <TransitionLink href="/cart" aria-label="Cart" className="relative hover:opacity-70">
             <ShoppingCart className="w-6 h-6 text-[#333333]" strokeWidth={1.5} />
-          </button>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#DB4444] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
+          </TransitionLink>
 
           {isLoggedIn && userMenu ? (
             userMenu

@@ -36,7 +36,7 @@ export default function HeroSection() {
   }, [mouseX, mouseY]);
 
   return (
-    <section data-animate="hero" className="w-full flex justify-center bg-white">
+    <section data-animate="hero" className="w-full flex justify-center bg-white relative">
       <div ref={containerRef} className="relative w-[1090px] h-[578px] bg-white overflow-hidden">
         {/* Background Text */}
         <motion.div
@@ -66,20 +66,45 @@ export default function HeroSection() {
         {/* Hero Shoe */}
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
-            className="relative w-[700px] h-[500px]"
+            className="relative w-[1000px] h-[600px]"
             style={{ rotateX, rotateY, translateX, translateY, transformStyle: 'preserve-3d' }}
-            animate={{ y: [0, -10, 0] }}
+            animate={{ y: [0, -15, 0] }}
             transition={{ y: { duration: 3, repeat: Infinity, ease: 'easeInOut' } }}
           >
             <Image
               src="/images/hero-shoe.png"
               alt="Featured Shoe"
               fill
-              className="object-contain drop-shadow-2xl"
+              className="object-contain"
               priority
             />
           </motion.div>
         </div>
+
+        {/* Animated Shadow Ellipse */}
+        <motion.div
+          className="absolute z-10 pointer-events-none"
+          style={{
+            bottom: '40px',
+            left: '180px',
+            width: '280px',
+            height: '35px',
+            background: 'black',
+            borderRadius: '50%',
+          }}
+          animate={{
+            y: [0, 4, 0],
+            scaleX: [1, 1.08, 1],
+            scaleY: [1, 1.05, 1],
+            opacity: [0.4, 0.3, 0.4],
+            filter: ['blur(18px)', 'blur(22px)', 'blur(18px)'],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
       </div>
     </section>
   );

@@ -1,36 +1,24 @@
 'use client';
 
-import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Header from './Header';
-import SignInModal from '@/components/auth/SignInModal';
-import SignUpModal from '@/components/auth/SignUpModal';
 import UserMenu from '@/components/auth/UserMenu';
+import { useAuthModal } from '@/components/auth/AuthModalContext';
+import { useCart, useWishlist } from '@/hooks';
 
 export default function HeaderWithAuth() {
   const { data: session } = useSession();
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(false);
+  const { openSignIn } = useAuthModal();
+  const { totalItems: cartCount } = useCart();
+  const { wishlistedIds } = useWishlist();
 
   return (
-    <>
-      <Header
-        isLoggedIn={!!session}
-        onAccountClick={() => setShowSignIn(true)}
-        userMenu={session ? <UserMenu /> : null}
-      />
-
-      <SignInModal
-        isOpen={showSignIn}
-        onClose={() => setShowSignIn(false)}
-        onSwitchToSignUp={() => { setShowSignIn(false); setShowSignUp(true); }}
-      />
-
-      <SignUpModal
-        isOpen={showSignUp}
-        onClose={() => setShowSignUp(false)}
-        onSwitchToSignIn={() => { setShowSignUp(false); setShowSignIn(true); }}
-      />
-    </>
+    <Header
+      isLoggedIn={!!session}
+      onAccountClick={openSignIn}
+      userMenu={session ? <UserMenu /> : null}
+      cartCount={cartCount}
+      wishlistCount={wishlistedIds.length}
+    />
   );
 }

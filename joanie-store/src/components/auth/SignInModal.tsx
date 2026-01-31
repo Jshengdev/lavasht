@@ -43,14 +43,14 @@ export default function SignInModal({ isOpen, onClose, onSwitchToSignUp }: SignI
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50"
+            className="fixed inset-0 bg-black/50 z-[200]"
           />
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[400px] bg-white rounded shadow-xl z-50 p-8"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[400px] bg-white rounded-lg shadow-xl z-[201] p-8"
           >
             <button onClick={onClose} className="absolute top-4 right-4 text-[#7F7F7F] hover:text-[#333333]">
               <X className="w-5 h-5" />
