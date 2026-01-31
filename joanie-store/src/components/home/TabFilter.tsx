@@ -16,7 +16,7 @@ const TABS = [
 
 export default function TabFilter({ activeTab, onTabChange }: TabFilterProps) {
   return (
-    <div data-animate="tabs" className="flex items-center gap-4">
+    <div data-animate="tabs" className="flex items-center gap-[10px]">
       {TABS.map(({ id, label, color, border }) => {
         const isActive = activeTab === id;
 
@@ -24,8 +24,13 @@ export default function TabFilter({ activeTab, onTabChange }: TabFilterProps) {
           <motion.button
             key={id}
             onClick={() => onTabChange(id)}
-            className="text-sm font-medium rounded-full border-4 h-[57px] px-8 py-4"
+            className="rounded-full border-4"
             style={{
+              fontFamily: "'Cabinet Grotesk', sans-serif",
+              fontWeight: 700,
+              fontSize: '20px',
+              letterSpacing: '0.05em',
+              padding: '16px 33px',
               backgroundColor: isActive ? color : 'transparent',
               borderColor: border,
               color: isActive ? '#FFFFFF' : color,

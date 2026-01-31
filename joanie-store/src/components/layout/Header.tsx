@@ -34,7 +34,11 @@ export default function Header({
 
           <nav className="hidden md:flex items-center gap-6">
             {NAV_ITEMS.map(item => (
-              <Link key={item} href="#" className="text-sm font-medium text-[#333333] hover:opacity-70">
+              <Link
+                key={item}
+                href="#"
+                className="text-[16px] font-medium leading-6 text-[#333333] hover:opacity-70"
+              >
                 {item}
               </Link>
             ))}
